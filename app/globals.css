@@ -2,32 +2,180 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Museo Font Faces ─────────────────────────────────────────────────────
+   Place your licensed .woff2 files in /public/fonts/
+   Filename convention: museo-[weight]-[style].woff2
+   ───────────────────────────────────────────────────────────────────────── */
+@font-face {
+  font-family: 'Museo';
+  src: url('/fonts/museo-300.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Museo';
+  src: url('/fonts/museo-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Museo';
+  src: url('/fonts/museo-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Museo';
+  src: url('/fonts/museo-900.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ─── Inter via system (fallback) or self-hosted ──────────────────────────
+   For now we rely on system Inter. To self-host, add woff2 files the same
+   way as Museo above and remove this comment.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* ─── CSS Custom Properties ────────────────────────────────────────────────
+   Useful for values that aren't easily expressed as Tailwind utilities.
+   ───────────────────────────────────────────────────────────────────────── */
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --color-brand-green:     #1E9B54;
+  --color-brand-purple:    #6C40E5;
+  --color-brand-black:     #0F172A;
+  --color-brand-white:     #FFFFFF;
+
+  --nav-height:            72px;
+  --site-max-width:        1280px;
+  --content-padding-x:     24px;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (min-width: 768px) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --content-padding-x: 40px;
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+@media (min-width: 1280px) {
+  :root {
+    --content-padding-x: 80px;
+  }
 }
 
+/* ─── Base Resets & Defaults ───────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply font-inter text-gray-880 bg-white;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* Headings default to Museo */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-museo;
+    line-height: 1.2;
+  }
+
+  /* Smooth focus ring — consistent across all interactive elements */
+  :focus-visible {
+    outline: 2px solid var(--color-brand-purple);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Remove default list styles when used inside components */
+  ul, ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Default link color */
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  img, video {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+}
+
+/* ─── Utility Layer ────────────────────────────────────────────────────── */
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  /* Container shorthand — use on any section wrapper */
+  .site-container {
+    width: 100%;
+    max-width: var(--site-max-width);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--content-padding-x);
+    padding-right: var(--content-padding-x);
+  }
+
+  /* Visually hidden (accessible) */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* Marquee pause on hover */
+  .marquee-track:hover .marquee-inner {
+    animation-play-state: paused;
   }
 }
+
+/* ─── Blog / Prose Content ─────────────────────────────────────────────── */
+/* Applied to .prose wrapper around rendered Markdown */
+.prose {
+  @apply text-gray-860 leading-relaxed;
+  max-width: var(--max-w-text, 720px);
+}
+.prose h1 { @apply font-museo text-heading-md mt-10 mb-4; }
+.prose h2 { @apply font-museo text-heading-sm mt-8 mb-3; }
+.prose h3 { @apply font-museo text-heading-xs mt-6 mb-2; }
+.prose p  { @apply mb-5; }
+.prose ul { @apply list-disc pl-6 mb-5 space-y-1; }
+.prose ol { @apply list-decimal pl-6 mb-5 space-y-1; }
+.prose li { @apply text-body-lg; }
+.prose a  { @apply text-primary-500 underline hover:text-primary-600 transition-colors; }
+.prose blockquote {
+  @apply border-l-4 border-primary-300 pl-5 py-1 my-6 text-gray-820 italic;
+}
+.prose code {
+  @apply bg-gray-40 text-gray-880 px-1.5 py-0.5 rounded text-sm font-mono;
+}
+.prose pre {
+  @apply bg-gray-880 text-gray-40 p-5 rounded-xl overflow-x-auto my-6;
+}
+.prose pre code {
+  @apply bg-transparent text-inherit p-0;
+}
+.prose img {
+  @apply rounded-xl my-8 w-full;
+}
+.prose strong { @apply font-semibold text-gray-880; }
+.prose hr { @apply border-gray-80 my-10; }
