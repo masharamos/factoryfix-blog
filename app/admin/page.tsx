@@ -40,7 +40,7 @@ function getPosts(): Post[] {
         excerpt: data.excerpt ?? '',
         thumbnail: data.thumbnail ?? '',
         indexed: data.indexed !== false,
-        status: data.status === 'draft' ? 'draft' : 'published',
+        status: (data.status === 'draft' ? 'draft' : 'published') as 'draft' | 'published',
       }
     })
     .sort((a, b) => (a.date < b.date ? 1 : -1))
