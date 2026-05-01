@@ -51,7 +51,7 @@ export default function ImageUpload({ value, onChange }: ImageUploadProps) {
       {mode === 'upload' ? (
         <>
           <p className="text-body-xs text-amber-600 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
-            ⚠️ File upload is preview only — the image won't be saved with the post. Use <button type="button" onClick={() => setMode('url')} className="underline font-medium">Paste URL</button> to save an image.
+            ⚠️ File upload is preview only — the image won&apos;t be saved with the post. Use <button type="button" onClick={() => setMode('url')} className="underline font-medium">Paste URL</button> to save an image.
           </p>
           <div
             className={`relative border-2 border-dashed rounded-xl flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors ${

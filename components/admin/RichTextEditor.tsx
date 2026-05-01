@@ -133,7 +133,7 @@ export default function RichTextEditor({ value, onChange }: RichTextEditorProps)
         <div className="w-px h-4 bg-gray-100 mx-1" />
 
         <ToolbarButton title="Blockquote" onClick={() => editor.chain().focus().toggleBlockquote().run()} active={editor.isActive('blockquote')}>
-          " Quote
+          &quot; Quote
         </ToolbarButton>
 
         {/* Link button + inline input */}
