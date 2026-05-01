@@ -86,6 +86,10 @@ const config: Config = {
       fontFamily: {
         // Museo for headings — woff2 files loaded via @font-face in globals.css
         museo:  ['Museo', 'Georgia', 'serif'],
+        // Syne for hero headlines and stats
+        syne:   ['Syne', 'Georgia', 'sans-serif'],
+        // DM Serif Display for article h2s and card titles
+        serif:  ['DM Serif Display', 'Georgia', 'serif'],
         // Inter for body / UI
         inter:  ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
         sans:   ['Inter', 'system-ui', '-apple-system', 'sans-serif'],

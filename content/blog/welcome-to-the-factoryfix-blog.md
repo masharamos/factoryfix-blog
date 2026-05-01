@@ -5,6 +5,15 @@ author: "FactoryFix Team"
 category: "Company News"
 excerpt: "We're launching the FactoryFix blog — your go-to resource for manufacturing recruitment insights, hiring strategies, and workforce trends."
 thumbnail: ""
+stats:
+  - number: "10M+"
+    label: "Skilled pros in network"
+  - number: "3x"
+    label: "Faster time-to-hire"
+  - number: "439K"
+    label: "Mfg job openings, Feb"
+  - number: "40.2h"
+    label: "Avg weekly hours, mfg"
 ---
 
 Welcome to the FactoryFix blog! We're excited to share insights, strategies, and stories to help manufacturing and skilled-trades employers build the teams they need.

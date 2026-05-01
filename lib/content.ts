@@ -6,6 +6,11 @@ const contentRoot = path.join(process.cwd(), 'content')
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
+export interface Stat {
+  number: string
+  label: string
+}
+
 export interface BlogPost {
   slug: string
   title: string
@@ -14,7 +19,13 @@ export interface BlogPost {
   category: string
   excerpt: string
   thumbnail: string
+  // Optional: data sources line shown in hero meta (e.g. "JOLTS · BLS")
+  dataSources?: string
+  // Optional: up to 4 key stats shown in the stats rail below the hero
+  stats?: Stat[]
   content: string
+  // Computed
+  readTime: number
 }
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -29,6 +40,11 @@ function getSlugs(dir: string): string[] {
     .map((f) => f.replace(/\.mdx?$/, ''))
 }
 
+function estimateReadTime(content: string): number {
+  const words = content.trim().split(/\s+/).length
+  return Math.max(1, Math.ceil(words / 250))
+}
+
 function getMarkdownFile<T>(dir: string, slug: string): T | null {
   const mdPath = path.join(contentRoot, dir, `${slug}.md`)
   const mdxPath = path.join(contentRoot, dir, `${slug}.mdx`)
@@ -36,7 +52,7 @@ function getMarkdownFile<T>(dir: string, slug: string): T | null {
   if (!fs.existsSync(filePath)) return null
   const raw = fs.readFileSync(filePath, 'utf8')
   const { data, content } = matter(raw)
-  return { ...data, slug, content } as T
+  return { ...data, slug, content, readTime: estimateReadTime(content) } as T
 }
 
 // ─── Blog ────────────────────────────────────────────────────────────────────

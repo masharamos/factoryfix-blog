@@ -2,16 +2,17 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { MDXRemote } from 'next-mdx-remote/rsc'
-import { getAllBlogSlugs, getBlogPost } from '@/lib/content'
-import ShareButtons from '@/components/blog/ShareButtons'
+import { getAllBlogSlugs, getBlogPost, getAllBlogPosts } from '@/lib/content'
 import CTABlock from '@/components/blog/CTABlock'
+import KeepReading from '@/components/blog/KeepReading'
+import ShareButtons from '@/components/blog/ShareButtons'
 
-// ─── Static params — tells Next.js which slugs exist at build time ────────────
+// ─── Static params ────────────────────────────────────────────────────────────
 export async function generateStaticParams() {
   return getAllBlogSlugs().map((slug) => ({ slug }))
 }
 
-// ─── Dynamic metadata per post ────────────────────────────────────────────────
+// ─── Metadata ─────────────────────────────────────────────────────────────────
 export async function generateMetadata({
   params,
 }: {
@@ -19,7 +20,6 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const post = getBlogPost(params.slug)
   if (!post) return {}
-
   return {
     title: post.title,
     description: post.excerpt || undefined,
@@ -33,7 +33,7 @@ export async function generateMetadata({
   }
 }
 
-// ─── Format date helper ───────────────────────────────────────────────────────
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 function formatDate(dateStr: string): string {
   if (!dateStr) return ''
   try {
@@ -48,105 +48,157 @@ function formatDate(dateStr: string): string {
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
-export default function BlogPostPage({
-  params,
-}: {
-  params: { slug: string }
-}) {
+export default function BlogPostPage({ params }: { params: { slug: string } }) {
   const post = getBlogPost(params.slug)
   if (!post) notFound()
 
-  const pageUrl = `https://www.factoryfix.com/blog/${post.slug}`
+  const related = getAllBlogPosts()
+    .filter((p) => p.slug !== post.slug)
+    .slice(0, 3)
+
+  const hasStats = post.stats && post.stats.length > 0
 
   return (
-    <div>
-      {/* ── Back to blog ──────────────────────────────────────────────────── */}
-      <div className="site-container pt-8 pb-0">
+    <div className="min-h-screen bg-gray-20">
+      <div className="max-w-[900px] mx-auto px-5 py-10">
+
+        {/* ── Back link ─────────────────────────────────────────────────────── */}
         <Link
           href="/blog"
-          className="inline-flex items-center gap-2 text-sm text-gray-800 hover:text-gray-880 transition-colors"
+          className="inline-flex items-center gap-2 text-body-sm text-gray-800 hover:text-gray-880 transition-colors mb-8"
         >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden
-          >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
           Back to blog
         </Link>
-      </div>
 
-      {/* ── Hero image — optional ─────────────────────────────────────────── */}
-      {post.thumbnail && (
-        <div className="site-container mt-8">
-          <div className="rounded-2xl overflow-hidden aspect-[2/1] bg-gray-40">
-            <img
-              src={post.thumbnail}
-              alt={post.title}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        </div>
-      )}
+        {/* ── Hero ──────────────────────────────────────────────────────────── */}
+        <header
+          className="overflow-hidden relative"
+          style={{
+            borderRadius: hasStats ? '14px 14px 0 0' : '14px',
+            marginBottom: hasStats ? 0 : '40px',
+          }}
+        >
+          {/* B&W background image */}
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `url('https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?w=1400&q=80&fit=crop')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              filter: 'grayscale(100%)',
+            }}
+          />
+          {/* Dark overlay at 40% */}
+          <div className="absolute inset-0 bg-gray-880" style={{ opacity: 0.8 }} />
 
-      {/* ── Article header ────────────────────────────────────────────────── */}
-      <div className="site-container">
-        <div className="max-w-text mx-auto pt-10 pb-4">
+          {/* Polka dot overlay */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              backgroundImage: `radial-gradient(rgba(255,255,255,0.20) 1px, transparent 1px)`,
+              backgroundSize: '18px 18px',
+            }}
+          />
 
-          {/* Category + date — both optional, only renders if at least one exists */}
-          {(post.category || post.date) && (
-            <div className="flex items-center gap-3 mb-5">
-              {post.category && (
-                <span className="inline-block px-3 py-1 bg-primary-0 text-primary-600 text-xs font-semibold rounded-full">
-                  {post.category}
-                </span>
+          <div className="relative z-10 p-10">
+            {/* Date tag */}
+            {post.date && (
+              <div
+                className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 mb-5 text-body-xxs font-semibold tracking-widest uppercase text-primary-300"
+                style={{ background: 'rgba(83,213,139,0.15)' }}
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-primary-300" />
+                {formatDate(post.date)}
+              </div>
+            )}
+
+            {/* Title */}
+            <h1 className="text-white mb-4 leading-[1.1] font-museo font-black text-heading-lg max-w-2xl">
+              {post.title}
+            </h1>
+
+            {/* Excerpt */}
+            {post.excerpt && (
+              <p className="text-body-sm text-white mb-7 leading-relaxed max-w-xl">
+                {post.excerpt}
+              </p>
+            )}
+
+            {/* Meta row */}
+            <div className="flex flex-wrap gap-5">
+              {post.author && (
+                <div>
+                  <div className="text-body-xxs text-white font-semibold tracking-widest uppercase mb-0.5">
+                    Author
+                  </div>
+                  <div className="text-body-xs text-white">{post.author}</div>
+                </div>
               )}
-              {post.date && (
-                <span className="text-sm text-gray-800">
-                  {formatDate(post.date)}
-                </span>
+              <div>
+                <div className="text-body-xxs text-white font-semibold tracking-widest uppercase mb-0.5">
+                  Read time
+                </div>
+                <div className="text-body-xs text-white">{post.readTime} min</div>
+              </div>
+              {post.dataSources && (
+                <div>
+                  <div className="text-body-xxs text-white font-semibold tracking-widest uppercase mb-0.5">
+                    Data
+                  </div>
+                  <div className="text-body-xs text-white">{post.dataSources}</div>
+                </div>
               )}
             </div>
-          )}
+          </div>
+        </header>
 
-          {/* Title */}
-          <h1 className="font-museo text-display-sm text-gray-880 leading-tight mb-5">
-            {post.title}
-          </h1>
+        {/* ── Stats rail ────────────────────────────────────────────────────── */}
+        {hasStats && (
+          <div
+            className="grid bg-white mb-10"
+            style={{
+              gridTemplateColumns: `repeat(${Math.min(post.stats!.length, 4)}, 1fr)`,
+              border: '0.5px solid rgba(15,23,42,0.12)',
+              borderTop: 'none',
+              borderRadius: '0 0 14px 14px',
+            }}
+          >
+            {post.stats!.slice(0, 4).map((stat, i) => (
+              <div
+                key={i}
+                className="px-5 py-8"
+                style={{
+                  borderRight:
+                    i < Math.min(post.stats!.length, 4) - 1
+                      ? '0.5px solid rgba(15,23,42,0.12)'
+                      : 'none',
+                }}
+              >
+                <div className="font-inter font-extrabold text-heading-md text-highlight-500 leading-none mb-1">
+                  {stat.number}
+                </div>
+                <div className="text-body-xs text-gray-800 leading-snug">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        )}
 
-          {/* Excerpt / subheadline — optional */}
-          {post.excerpt && (
-            <p className="text-body-lg text-gray-820 leading-relaxed border-b border-gray-80 pb-8">
-              {post.excerpt}
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* ── Body content ──────────────────────────────────────────────────── */}
-      <div className="site-container">
-        <div className="max-w-text mx-auto">
+        {/* ── Body content ──────────────────────────────────────────────────── */}
+        <div className="max-w-text">
           <article className="prose">
             <MDXRemote source={post.content} />
           </article>
-
-          {/* ── Share buttons ──────────────────────────────────────────── */}
-          <ShareButtons url={pageUrl} title={post.title} />
+          <ShareButtons url={`https://www.factoryfix.com/blog/${post.slug}`} title={post.title} />
         </div>
-      </div>
 
-      {/* ── CTA block ─────────────────────────────────────────────────────── */}
-      <div className="site-container pb-20">
-        <div className="max-w-text mx-auto">
-          <CTABlock />
-        </div>
+        <CTABlock />
+
+        {/* ── Keep reading ──────────────────────────────────────────────────── */}
+        {related.length > 0 && <KeepReading posts={related} />}
+
       </div>
     </div>
   )

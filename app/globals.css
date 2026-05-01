@@ -155,15 +155,41 @@
   max-width: var(--max-w-text, 720px);
 }
 .prose h1 { @apply font-museo text-heading-md mt-10 mb-4; }
-.prose h2 { @apply font-museo text-heading-sm mt-8 mb-3; }
-.prose h3 { @apply font-museo text-heading-xs mt-6 mb-2; }
-.prose p  { @apply mb-5; }
+.prose h2 {
+  font-family: 'Inter', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #0F172A;
+  margin-top: 56px;
+  margin-bottom: 12px;
+}
+.prose h3 {
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  line-height: 1.3;
+  color: #0F172A;
+  margin-top: 28px;
+  margin-bottom: 10px;
+}
+.prose p  { @apply mb-5; font-size: 15px; line-height: 1.75; }
 .prose ul { @apply list-disc pl-6 mb-5 space-y-1; }
 .prose ol { @apply list-decimal pl-6 mb-5 space-y-1; }
-.prose li { @apply text-body-lg; }
-.prose a  { @apply text-primary-500 underline hover:text-primary-600 transition-colors; }
+.prose li { font-size: 15px; line-height: 1.75; }
+.prose a  { @apply text-highlight-500 underline hover:text-highlight-600 transition-colors; }
 .prose blockquote {
-  @apply border-l-4 border-primary-300 pl-5 py-1 my-6 text-gray-820 italic;
+  border-left: 3px solid #53D58B;
+  padding: 16px 20px;
+  margin: 28px 0;
+  background: #F1FCF5;
+  border-radius: 0 6px 6px 0;
+}
+.prose blockquote p {
+  font-size: 16px;
+  font-style: italic;
+  color: #0F172A;
+  margin: 0;
+  line-height: 1.6;
 }
 .prose code {
   @apply bg-gray-40 text-gray-880 px-1.5 py-0.5 rounded text-sm font-mono;

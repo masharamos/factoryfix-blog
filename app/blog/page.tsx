@@ -7,6 +7,14 @@ export const metadata: Metadata = {
   description: 'Knowledge and resources you need to succeed in manufacturing recruitment.',
 }
 
+// Cycles through brand-colored placeholder backgrounds (Tailwind classes)
+const PLACEHOLDER_BG = [
+  'bg-gray-880',    // dark navy
+  'bg-highlight-0', // purple wash
+  'bg-primary-0',   // green wash
+  'bg-gray-60',     // gray wash
+]
+
 export default function BlogIndexPage() {
   const posts = getAllBlogPosts()
 
@@ -16,37 +24,36 @@ export default function BlogIndexPage() {
         The FactoryFix Blog
       </h1>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {posts.map((post) => (
+        {posts.map((post, i) => (
           <Link
             key={post.slug}
             href={`/blog/${post.slug}`}
             className="group block bg-white border border-gray-80 rounded-xl overflow-hidden hover:shadow-hover transition-shadow"
           >
-            {post.thumbnail && (
-              <div className="aspect-[16/9] bg-gray-40 overflow-hidden">
+            {/* Thumbnail — real image or brand-colored placeholder */}
+            <div className="aspect-[16/9] overflow-hidden">
+              {post.thumbnail ? (
                 <img
                   src={post.thumbnail}
                   alt={post.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
-              </div>
-            )}
-            <div className="p-5">
-              {post.category && (
-                <span className="text-xs font-semibold text-primary-500 uppercase tracking-wide">
-                  {post.category}
-                </span>
+              ) : (
+                <div className={`w-full h-full ${PLACEHOLDER_BG[i % PLACEHOLDER_BG.length]}`} />
               )}
-              <h2 className="font-museo text-heading-xs text-gray-880 mt-1 mb-2 group-hover:text-primary-500 transition-colors line-clamp-2">
+            </div>
+
+            <div className="px-5 py-2 flex flex-col gap-1">
+              <h2 className="font-inter font-semibold text-gray-880 text-heading-xs leading-[140%] line-clamp-2">
                 {post.title}
               </h2>
               {post.excerpt && (
-                <p className="text-sm text-gray-800 line-clamp-2">
+                <p className="text-body-sm text-gray-800 line-clamp-2">
                   {post.excerpt}
                 </p>
               )}
               {post.date && (
-                <p className="text-xs text-gray-400 mt-3">
+                <p className="text-body-xs text-gray-400">
                   {new Date(post.date).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
